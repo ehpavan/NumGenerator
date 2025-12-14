@@ -5,15 +5,13 @@
 <title>NumGen</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 
   body {
     margin: 0;
     background: #020617;
     color: #e5e7eb;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, monospace;
+    font-family: system-ui, monospace;
     display: flex;
     justify-content: center;
     padding: 40px 16px;
@@ -28,7 +26,6 @@
     text-align: center;
     margin-bottom: 25px;
     font-size: 26px;
-    letter-spacing: 0.5px;
   }
 
   .controls {
@@ -46,24 +43,17 @@
     border: 1px solid #334155;
     color: #e5e7eb;
     border-radius: 8px;
-    font-size: 14px;
     text-align: center;
-  }
-
-  input::placeholder {
-    color: #64748b;
   }
 
   button {
     padding: 12px 22px;
     background: #2563eb;
-    color: #ffffff;
+    color: #fff;
     border: none;
     border-radius: 8px;
-    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease;
   }
 
   button:hover {
@@ -83,8 +73,6 @@
     border-radius: 10px;
     padding: 14px;
     color: #22c55e;
-    font-size: 14px;
-    line-height: 1.4;
     resize: none;
   }
 
@@ -102,13 +90,8 @@
   }
 
   @media (max-width: 800px) {
-    .output-wrapper {
-      flex-direction: column;
-    }
-
-    .side-actions {
-      flex-direction: row;
-    }
+    .output-wrapper { flex-direction: column; }
+    .side-actions { flex-direction: row; }
   }
 </style>
 </head>
@@ -128,7 +111,7 @@
     <textarea id="output" readonly></textarea>
 
     <div class="side-actions">
-      <button onclick="copyNumbers()">Copy</button>
+      <button id="copyBtn" onclick="copyNumbers()">Copy</button>
     </div>
   </div>
 
@@ -180,6 +163,7 @@ function generate() {
 function copyNumbers() {
   const output = document.getElementById("output");
   const status = document.getElementById("status");
+  const btn = document.getElementById("copyBtn");
 
   if (!output.value) {
     status.textContent = "Nothing to copy";
@@ -187,7 +171,12 @@ function copyNumbers() {
   }
 
   navigator.clipboard.writeText(output.value).then(() => {
-    status.textContent = "Numbers copied ✓";
+    btn.textContent = "✓ Copied";
+    status.textContent = "Numbers copied";
+
+    setTimeout(() => {
+      btn.textContent = "Copy";
+    }, 1500);
   });
 }
 </script>
