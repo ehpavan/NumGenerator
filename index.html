@@ -1,64 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NumGen</title>
-  <style>
-    body {
-      font-family: monospace;
-      background: #0f172a;
-      color: #e5e7eb;
-      padding: 20px;
+<meta charset="UTF-8">
+<title>NumGen</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #020617;
+    color: #e5e7eb;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, monospace;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  input {
+    width: 190px;
+    padding: 12px;
+    background: #020617;
+    border: 1px solid #334155;
+    color: #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  input::placeholder {
+    color: #64748b;
+  }
+
+  button {
+    padding: 12px 22px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  button:hover {
+    background: #1d4ed8;
+  }
+
+  .output-wrapper {
+    display: flex;
+    gap: 14px;
+  }
+
+  textarea {
+    flex: 1;
+    height: 460px;
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 14px;
+    color: #22c55e;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: none;
+  }
+
+  .side-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .status {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #38bdf8;
+    min-height: 18px;
+  }
+
+  @media (max-width: 800px) {
+    .output-wrapper {
+      flex-direction: column;
     }
-    input, button {
-      padding: 6px;
-      margin: 5px 0;
-      width: 200px;
+
+    .side-actions {
+      flex-direction: row;
     }
-    textarea {
-      width: 100%;
-      height: 300px;
-      margin-top: 10px;
-      background: #020617;
-      color: #22c55e;
-      padding: 10px;
-    }
-  </style>
+  }
+</style>
 </head>
+
 <body>
+<div class="container">
 
-<h2>NumGen</h2>
+  <h1>NumGen</h1>
 
-<input type="number" id="start" placeholder="First number"><br>
-<input type="number" id="end" placeholder="Last number"><br>
+  <div class="controls">
+    <input type="text" id="start" placeholder="First number">
+    <input type="text" id="end" placeholder="Last number">
+    <button onclick="generate()">Generate</button>
+  </div>
 
-<button onclick="generate()">Generate</button>
-<button onclick="copy()">Copy</button>
+  <div class="output-wrapper">
+    <textarea id="output" readonly></textarea>
 
-<textarea id="output" readonly></textarea>
+    <div class="side-actions">
+      <button onclick="copyNumbers()">Copy</button>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+
+</div>
 
 <script>
+const MAX_LIMIT = 200000;
+
 function generate() {
-  const start = parseInt(document.getElementById("start").value);
-  const end = parseInt(document.getElementById("end").value);
-  const out = document.getElementById("output");
+  const startInput = document.getElementById("start").value;
+  const endInput = document.getElementById("end").value;
+  const output = document.getElementById("output");
+  const status = document.getElementById("status");
 
-  out.value = "";
+  output.value = "";
+  status.textContent = "";
 
-  if (isNaN(start) || isNaN(end)) {
-    out.value = "Enter valid numbers";
+  if (!startInput || !endInput) {
+    status.textContent = "Enter valid numbers";
     return;
   }
 
-  for (let i = start; i < end; i++) {
-    out.value += i + "\n";
+  const start = parseInt(startInput);
+  const end = parseInt(endInput);
+  const width = startInput.length;
+
+  if (isNaN(start) || isNaN(end) || end <= start) {
+    status.textContent = "Invalid range";
+    return;
   }
+
+  const total = end - start;
+  if (total > MAX_LIMIT) {
+    status.textContent = `Too many numbers (${total}). Limit is ${MAX_LIMIT}`;
+    return;
+  }
+
+  const result = new Array(total);
+  for (let i = 0; i < total; i++) {
+    result[i] = (start + i).toString().padStart(width, "0");
+  }
+
+  output.value = result.join("\n");
+  status.textContent = `Generated ${total} numbers`;
 }
 
-function copy() {
-  const out = document.getElementById("output");
-  out.select();
-  document.execCommand("copy");
+function copyNumbers() {
+  const output = document.getElementById("output");
+  const status = document.getElementById("status");
+
+  if (!output.value) {
+    status.textContent = "Nothing to copy";
+    return;
+  }
+
+  navigator.clipboard.writeText(output.value).then(() => {
+    status.textContent = "Numbers copied ✓";
+  });
 }
 </script>
 
