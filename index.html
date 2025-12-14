@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NumGen</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 20px;
+    }
+    input, button {
+      padding: 6px;
+      margin: 5px 0;
+      width: 200px;
+    }
+    textarea {
+      width: 100%;
+      height: 300px;
+      margin-top: 10px;
+      background: #020617;
+      color: #22c55e;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>NumGen</h2>
+
+<input type="number" id="start" placeholder="First number"><br>
+<input type="number" id="end" placeholder="Last number"><br>
+
+<button onclick="generate()">Generate</button>
+<button onclick="copy()">Copy</button>
+
+<textarea id="output" readonly></textarea>
+
+<script>
+function generate() {
+  const start = parseInt(document.getElementById("start").value);
+  const end = parseInt(document.getElementById("end").value);
+  const out = document.getElementById("output");
+
+  out.value = "";
+
+  if (isNaN(start) || isNaN(end)) {
+    out.value = "Enter valid numbers";
+    return;
+  }
+
+  for (let i = start; i < end; i++) {
+    out.value += i + "\n";
+  }
+}
+
+function copy() {
+  const out = document.getElementById("output");
+  out.select();
+  document.execCommand("copy");
+}
+</script>
+
+</body>
+</html>
